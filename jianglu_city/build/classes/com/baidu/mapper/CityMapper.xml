@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="com.baidu.mapper.CityMapper">
+
+	<resultMap type="city" id="findCityResultMap">
+		<id column="id" property="id" />
+		<result column="name" property="name" />
+		<result column="city_name" property="city_name" />
+		<result column="tel" property="tel" />
+		<result column="email" property="email" />
+		<result column="city_tese" property="city_tese" />
+		<result column="tid" property="tid" />
+		<association property="cityType" javaType="cityType" >
+			<id column="iii" property="t_id" />
+			<result column="tname" property="tname" />
+		</association>
+	</resultMap>
+
+	<select id="findCity" resultMap="findCityResultMap" >
+		SELECT a.*,b.t_id iii,b.tname FROM t_city a,t_type b WHERE a.tid=b.t_id
+		
+			<if test="city_name!=null" >
+			   and 	city_name like '%${city_name}%' 
+			</if>		
+			<if test="city_tese!=null" >
+			and city_tese =#{city_tese }
+			</if>
+		 limit #{startIndex},#{pageSize};
+	</select>
+	
+	<select id="findCityType" resultType="cityType" >
+		select * from t_type 
+	</select>
+	
+	<insert id="addCity" parameterType="city" >
+		insert into t_city(city_name,tid,city_tese,name,tel,email) values(#{city_name},#{tid},#{city_tese},#{name},#{tel},#{email})
+	</insert>
+	
+	<select id="findCityByName" resultType="city" parameterType="city" >
+		select * from t_city where city_name=#{city_name}
+	</select>
+	
+	<select id="findCityById" resultType="city" parameterType="city" >
+		select * from t_city where id = #{id}
+	</select>
+	
+	<update id="updateCity" parameterType="city" >
+		update t_city set name=#{name},city_name=#{city_name},city_tese=#{city_tese},tel=#{tel},email=#{email},tid=#{tid} where id=#{id}
+	</update>
+	
+	<delete id="deleteCityById" parameterType="city" >
+		delete from t_city where id = #{id}
+	</delete>
+	
+	<select id="findCount" parameterType="hashmap" resultType="int" >
+		select count(1) from t_city 
+		<where>
+		<if test="city_name!=null" >
+			   and 	city_name like '%${city_name}%' 
+		</if>	
+		<if test="city_tese!=null" >
+			and city_tese =#{city_tese }
+		</if>	
+		</where>
+	</select>
+	
+	<select id="findCityByIds" resultMap="findCityResultMap"   >
+	
+		select * from t_city 
+		<where>
+			<foreach collection="array" item="id" >
+			or id=#{id}
+			</foreach>
+		</where>
+	
+	</select>
+	
+	<insert id="addUser" parameterType="user" >
+		insert into tt_user(fileName) values(#{fileName})
+	</insert>
+	
+</mapper>
+
+<!-- <resultMap type="orders" id="orderUserResultMap">
+		<id column="id" property="id" />
+		<result column="note" property="note" />
+		<result column="createtime" property="createtime" />
+		<result column="userId" property="userId" />
+		下边完成关联信息的映射
+		association：用于对关联信息映射到单个pojo
+		property：要将关联信息映射到orders的哪个属性中
+		javaType：关联信息映射到orders的属性的类型，是user的类型
+		
+		<association property="user" javaType="user" >
+			id：关联信息的唯 一标识 
+			property： 要映射到user的哪个属性中
+			<id column="id" property="id" />
+			<result column="username" property="username" />
+			<result column="password" property="password" />
+			<result column="birthday" property="birthday" />
+		</association>
+	</resultMap>
+	一对多 resultMap配置
+	<resultMap type="orders" id="orderAndItemsResultMap">
+		<id column="id" property="id" />
+		<result column="note" property="note" />
+		<result column="createtime" property="createtime" />
+		<result column="userId" property="userId" />
+		<collection property="list" ofType="com.baidu.entity.Items"  >
+			<id column="item_id" property="id" />
+			<result column="items_name" property="item_name" />
+		</collection>
+	
+	</resultMap> -->
