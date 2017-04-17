@@ -15,7 +15,7 @@
     http://www.springframework.org/schema/util
     http://www.springframework.org/schema/util/spring-util-3.2.xsd">
 
-    <context:component-scan base-package="com.maven.spring.Service"/>
+    <context:component-scan base-package="com.maokeshop"/>
     <!-- 引入jdbc配置文件 -->
 
     <bean id="dataSource" class="com.alibaba.druid.pool.DruidDataSource"
@@ -54,9 +54,10 @@
     <!-- mybatis文件配置，扫描所有mapper文件 -->
     <bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
         <property name="dataSource" ref="dataSource"></property>
+        
         <property name="configLocation" value="classpath:sqlMapConfig.xml"/>
         <property name="mapperLocations">
-				<value>classpath:com/maokeshop/mapper/*.xml</value>
+				<value>classpath:com/maokeshop/mapper.*.xml</value>
 		</property>
     </bean>
 
@@ -75,7 +76,7 @@
 		<!-- 事务处理  -->
 		<aop:config>
 			<!-- 声明切入点 -->
-			<aop:pointcut expression="execution(* com.baidu.service..*.*(..))" id="trPointcut"/>
+			<aop:pointcut expression="execution(* com.maokeshop.service..*.*(..))" id="trPointcut"/>
 			<!-- 通知与切入点关联 -->
 			<aop:advisor advice-ref="trAdvice" pointcut-ref="trPointcut"/>
 		</aop:config>
