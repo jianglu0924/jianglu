@@ -1,0 +1,120 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "mybatis-3-mapper.dtd" >
+	
+	
+	
+	<mapper namespace="com.bawei.ssm.mapper.UserMapper">
+	
+		<!--自定义resultMap 
+		type属性用来说明当前resultMap对应的是哪一个具体的实体类。
+		 -->
+		<resultMap id="getUser" type="com.bawei.ssm.dto.User" >
+			<id property="id" column="id"/>
+			<result property="name" column="name"/>
+			<result property="age" column="age"/>
+			<result property="hobby" column="hobby"/>
+			<result property="birthday" column="birthday"/>
+			
+			<!-- 特殊处理自定类型，使用association标签-->
+			<association property="company" javaType="com.bawei.ssm.dto.Company">
+				<!-- column的属性值来源于小表当中 -->
+				<id property="c_id" column="cid"/>
+				<result property="cname" column="cname"/>
+			</association>
+			
+			<!-- 特殊处理自定类型使用association -->
+			<association property="position" javaType="com.bawei.ssm.dto.Position">
+				<id property="p_id" column="pid"/>
+				<result property="pname" column="pname"/>
+			</association>
+		
+		
+		
+		
+		
+		</resultMap>
+		<!-- count -->
+		<select id="count" parameterType="com.bawei.ssm.dto.User" resultType="int">
+			select count(1) from t_user 
+			<where>
+				<if test="name!=null">
+					and name like '%${name}%'
+				</if>
+				<if test="age!=null">
+					and age=#{age}
+				</if>
+				<if test="hobby!=null">
+					and hobby like '%${hobby}%'
+				</if>
+			</where>
+			
+		</select>
+		
+		<!-- list -->
+		<select id="list" parameterType="hashmap" resultMap="getUser">
+			select u.*, c.cname,p.pname from t_user u,t_company c,t_position p where u.c_id=c.cid and u.p_id=p.pid 
+			<if test="name!=null">
+					and name like '%${name}%'
+				</if>
+				<if test="age!=null">
+					and age=#{age}
+				</if>
+				<if test="hobby!=null">
+					and hobby like '%${hobby}%'
+				</if> 
+			limit #{startIndex},#{pageSize};
+		</select>
+		
+		
+		<!-- findCompany  查询公司列表 -->
+		<select id="findCompany" resultType="Company">
+			select * from t_company;
+		</select>
+		
+		<!-- findPosition -->
+		
+		<select id="findPosition" resultType="com.bawei.ssm.dto.Position">
+			select * from t_position;
+		</select>
+		
+		
+		<!-- add -->
+		
+		<insert id="add" parameterType="com.bawei.ssm.dto.User">
+		
+			insert into t_user(name,age,birthday,hobby,c_id,p_id) values(
+				#{name},#{age},#{birthday},#{hobby},#{c_id},#{p_id}
+			);
+		</insert>
+		
+		
+		<!-- findUserById -->
+		<select id="findUserById" parameterType="com.bawei.ssm.dto.User" resultType="com.bawei.ssm.dto.User">
+			select * from t_user where id=#{id};
+		</select>
+		
+		<!-- update -->
+		<update id="update" parameterType="com.bawei.ssm.dto.User">
+		
+			update t_user set name=#{name},age=#{age},hobby=#{hobby},birthday=#{birthday},c_id=#{c_id},
+			p_id=#{p_id} where id=#{id};
+		</update>
+		
+		<!-- delete -->
+		<delete id="delete" parameterType="com.bawei.ssm.dto.User">
+			delete from t_user where id=#{id};
+		</delete>
+		
+		<!-- login -->
+		<select id="login" parameterType="com.bawei.ssm.dto.Emp" resultType="com.bawei.ssm.dto.Emp">
+			select * from emp where name=#{name} and password=#{password};
+		</select>
+		
+		
+		
+		
+		
+		
+		
+		
+	</mapper>
